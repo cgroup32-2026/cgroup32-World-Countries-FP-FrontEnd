@@ -9,6 +9,7 @@ import { MagazineHomePage } from "./pages/MagazineHomePage";
 import { CountriesPage } from "./pages/CountriesPage";
 import { CountryDetailPage } from "./pages/CountryDetailPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { ProfilePage } from "./pages/ProfilePage";
 
 function Placeholder({ title }) {
   return (
@@ -45,7 +46,7 @@ function App() {
               path="/profile"
               element={
                 <ProtectedRoute>
-                  <Placeholder title="My Profile" />
+                  <ProfilePage />
                 </ProtectedRoute>
               }
             />
