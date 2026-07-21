@@ -10,6 +10,8 @@ import { CountriesPage } from "./pages/CountriesPage";
 import { CountryDetailPage } from "./pages/CountryDetailPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { MyListsPage } from "./pages/MyListsPage";
+
 
 function Placeholder({ title }) {
   return (
@@ -54,7 +56,7 @@ function App() {
               path="/my-lists"
               element={
                 <ProtectedRoute>
-                  <Placeholder title="My Lists" />
+                  <MyListsPage />
                 </ProtectedRoute>
               }
             />

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export function CountryCard({ country }) {
+export function CountryCard({ country, footer }) {
   return (
     <Link
       to={`/countries/${country.id}`}
@@ -31,9 +31,13 @@ export function CountryCard({ country }) {
         </p>
       </div>
 
-      <p className="mt-5 text-sm font-semibold text-amber-400 transition group-hover:translate-x-1">
-        View details →
-      </p>
+      <div className="mt-5">
+        {footer ?? (
+          <p className="text-sm font-semibold text-amber-400 transition group-hover:translate-x-1">
+            View Details →
+          </p>
+        )}
+      </div>
     </Link>
   );
 }
