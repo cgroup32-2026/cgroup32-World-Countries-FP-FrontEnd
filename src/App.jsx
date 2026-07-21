@@ -6,6 +6,7 @@ import { AdminRoute } from "./components/AdminRoute";
 import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
 import { MagazineHomePage } from "./pages/MagazineHomePage";
+import { CountriesPage } from "./pages/CountriesPage";
 
 function Placeholder({ title }) {
   return (
@@ -28,10 +29,7 @@ function App() {
               path="/register"
               element={<Placeholder title="Register" />}
             />
-            <Route
-              path="/countries"
-              element={<Placeholder title="Countries" />}
-            />
+            <Route path="/countries" element={<CountriesPage />} />
             <Route
               path="/countries/:id"
               element={<Placeholder title="Country Detail" />}
