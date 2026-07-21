@@ -8,6 +8,7 @@ import { HomePage } from "./pages/HomePage";
 import { MagazineHomePage } from "./pages/MagazineHomePage";
 import { CountriesPage } from "./pages/CountriesPage";
 import { CountryDetailPage } from "./pages/CountryDetailPage";
+import { RegisterPage } from "./pages/RegisterPage";
 
 function Placeholder({ title }) {
   return (
@@ -26,10 +27,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/register"
-              element={<Placeholder title="Register" />}
-            />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path="/countries" element={<CountriesPage />} />
             <Route path="/countries/:id" element={<CountryDetailPage />} />
             <Route path="/shares" element={<Placeholder title="Community" />} />

@@ -45,12 +45,21 @@ export function Navbar() {
             Logout ({user?.username})
           </button>
         ) : (
-          <Link
-            to="/login"
-            className="bg-amber-500 hover:bg-amber-600 text-navy-950 font-semibold px-4 py-1.5 rounded transition"
-          >
-            Login
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/login"
+              className="text-amber-50 hover:text-amber-400 transition"
+            >
+              Login
+            </Link>
+
+            <Link
+              to="/register"
+              className="bg-amber-500 hover:bg-amber-600 text-navy-950 font-semibold px-4 py-1.5 rounded transition"
+            >
+              Register
+            </Link>
+          </div>
         )}
       </div>
     </nav>

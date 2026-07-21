@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/authApi";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
+
 
 export function LoginPage() {
   const [username, setUsername] = useState("");
@@ -67,6 +69,16 @@ export function LoginPage() {
         >
           {loading ? "Logging in..." : "Log In"}
         </button>
+
+        <p className="mt-6 text-center text-sm text-amber-50/60">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="font-semibold text-amber-400 hover:text-amber-300"
+          >
+            Create one
+          </Link>
+        </p>
       </form>
     </div>
   );

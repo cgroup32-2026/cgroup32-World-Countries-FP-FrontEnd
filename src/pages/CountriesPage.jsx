@@ -3,6 +3,16 @@ import { Link } from "react-router-dom";
 import { CountryCard } from "../components/countries/CountryCard";
 import { countries } from "../data/countries";
 
+const regions = [
+  "All Regions",
+  "Africa",
+  "Asia",
+  "Europe",
+  "North America",
+  "South America",
+  "Oceania",
+];
+
 export function CountriesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("All Regions");
