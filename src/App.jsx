@@ -7,6 +7,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
 import { MagazineHomePage } from "./pages/MagazineHomePage";
 import { CountriesPage } from "./pages/CountriesPage";
+import { CountryDetailPage } from "./pages/CountryDetailPage";
 
 function Placeholder({ title }) {
   return (
@@ -30,10 +31,7 @@ function App() {
               element={<Placeholder title="Register" />}
             />
             <Route path="/countries" element={<CountriesPage />} />
-            <Route
-              path="/countries/:id"
-              element={<Placeholder title="Country Detail" />}
-            />
+            <Route path="/countries/:id" element={<CountryDetailPage />} />
             <Route path="/shares" element={<Placeholder title="Community" />} />
             <Route path="/quizzes" element={<Placeholder title="Quizzes" />} />
             <Route

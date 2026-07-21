@@ -1,73 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CountryCard } from "../components/countries/CountryCard";
-
-const countries = [
-  {
-    id: "japan",
-    name: "Japan",
-    code: "JP",
-    region: "Asia",
-    capital: "Tokyo",
-    population: "125 million",
-    flag: "🇯🇵",
-  },
-  {
-    id: "italy",
-    name: "Italy",
-    code: "IT",
-    region: "Europe",
-    capital: "Rome",
-    population: "59 million",
-    flag: "🇮🇹",
-  },
-  {
-    id: "new-zealand",
-    name: "New Zealand",
-    code: "NZ",
-    region: "Oceania",
-    capital: "Wellington",
-    population: "5 million",
-    flag: "🇳🇿",
-  },
-  {
-    id: "brazil",
-    name: "Brazil",
-    code: "BR",
-    region: "South America",
-    capital: "Brasília",
-    population: "216 million",
-    flag: "🇧🇷",
-  },
-  {
-    id: "canada",
-    name: "Canada",
-    code: "CA",
-    region: "North America",
-    capital: "Ottawa",
-    population: "40 million",
-    flag: "🇨🇦",
-  },
-  {
-    id: "egypt",
-    name: "Egypt",
-    code: "EG",
-    region: "Africa",
-    capital: "Cairo",
-    population: "112 million",
-    flag: "🇪🇬",
-  },
-];
-
-const regions = [
-  "All Regions",
-  "Africa",
-  "Asia",
-  "Europe",
-  "North America",
-  "South America",
-  "Oceania",
-];
+import { countries } from "../data/countries";
 
 export function CountriesPage() {
   const [searchTerm, setSearchTerm] = useState("");
