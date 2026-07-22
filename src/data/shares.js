@@ -1,0 +1,6 @@
+export const shares = [
+  { shareId: 1, userId: 101, username: "alex", countryId: 1, countryName: "Japan", content: "Japan was one of the most memorable countries I've visited. The combination of ancient traditions, modern cities, and incredible food made the trip unforgettable.", rating: 5, createdAt: "2026-07-20T14:30:00Z", updatedAt: null },
+  { shareId: 2, userId: 102, username: "maria", countryId: 2, countryName: "Italy", content: "Italy has an incredible mix of history, architecture, and food. Rome was amazing, but the smaller towns were probably my favorite part of the trip.", rating: 5, createdAt: "2026-07-18T09:15:00Z", updatedAt: null },
+  { shareId: 3, userId: 103, username: "david", countryId: 5, countryName: "Canada", content: "The landscapes in Canada are incredible. I especially enjoyed exploring the mountains and spending time in the national parks.", rating: 4, createdAt: "2026-07-15T18:45:00Z", updatedAt: null },
+  { shareId: 4, userId: 104, username: "sophia", countryId: 4, countryName: "Brazil", content: "Brazil is full of energy and variety. The beaches were beautiful, but what stood out most was the culture and atmosphere of the cities.", rating: 4, createdAt: "2026-07-12T11:20:00Z", updatedAt: null },
+];

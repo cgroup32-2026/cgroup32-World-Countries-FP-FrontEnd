@@ -3,8 +3,12 @@ export function CountryHero({ country }) {
     <section className="border-b border-navy-800 bg-navy-900">
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-          <div className="flex h-32 w-32 items-center justify-center rounded-full border border-navy-600 bg-navy-800 text-7xl">
-            {country.flag}
+          <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border border-navy-600 bg-navy-800">
+            <img
+              src={country.flagUrl}
+              alt={`${country.nameCommon} flag`}
+              className="h-full w-full object-cover"
+            />
           </div>
 
           <div>
@@ -13,11 +17,11 @@ export function CountryHero({ country }) {
             </p>
 
             <h1 className="mt-2 font-heading text-5xl text-amber-50">
-              {country.name}
+              {country.nameCommon}
             </h1>
 
             <p className="mt-2 text-amber-50/50">
-              {country.officialName} · {country.code}
+              {country.nameOfficial} · {country.ccaCode3}
             </p>
           </div>
         </div>

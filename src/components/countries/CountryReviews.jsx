@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { formatDate } from "../../utils/format";
 
 export function CountryReviews({ reviews, isAuthenticated, onReviewSubmit }) {
   const [reviewText, setReviewText] = useState("");
@@ -69,23 +70,22 @@ export function CountryReviews({ reviews, isAuthenticated, onReviewSubmit }) {
       <div className="mt-6 space-y-4">
         {reviews.map((review) => (
           <article
-            key={review.id}
+            key={review.shareId}
             className="rounded-lg border border-navy-700 bg-navy-900 p-6"
           >
             <div className="flex flex-col justify-between gap-2 sm:flex-row">
               <div>
                 <p className="font-semibold text-amber-50">{review.username}</p>
-
                 <p className="text-sm text-amber-400">
                   {"★".repeat(review.rating)}
                   {"☆".repeat(5 - review.rating)}
                 </p>
               </div>
-
-              <span className="text-sm text-amber-50/40">{review.date}</span>
+              <span className="text-sm text-amber-50/40">
+                {formatDate(review.createdAt)}
+              </span>
             </div>
-
-            <p className="mt-4 leading-7 text-amber-50/70">{review.text}</p>
+            <p className="mt-4 leading-7 text-amber-50/70">{review.content}</p>
           </article>
         ))}
       </div>

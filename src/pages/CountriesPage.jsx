@@ -20,8 +20,8 @@ export function CountriesPage() {
   const filteredCountries = useMemo(() => {
     return countries.filter((country) => {
       const matchesSearch =
-        country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        country.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        country.nameCommon.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        country.ccaCode3.toLowerCase().includes(searchTerm.toLowerCase()) ||
         country.capital.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesRegion =
@@ -100,7 +100,7 @@ export function CountriesPage() {
         ) : (
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredCountries.map((country) => (
-              <CountryCard key={country.id} country={country} />
+              <CountryCard key={country.countryId} country={country} />
             ))}
           </div>
         )}

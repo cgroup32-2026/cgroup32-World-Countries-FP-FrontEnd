@@ -10,18 +10,26 @@ import { countries } from "../data/countries";
 
 const initialReviews = [
   {
-    id: 1,
+    shareId: 1,
+    userId: 101,
     username: "alex_travels",
-    rating: 5,
-    text: "Absolutely fascinating. The combination of tradition, food, and modern life makes this an unforgettable destination.",
-    date: "2 weeks ago",
+    countryId: 1,
+    countryName: "Japan",
+    content:
+      "Absolutely fascinating. The combination of tradition, food, and modern life makes this an unforgettable destination.",
+    createdAt: "2026-07-08T10:00:00Z",
+    updatedAt: null,
   },
   {
-    id: 2,
+    shareId: 2,
+    userId: 102,
     username: "worldexplorer",
-    rating: 4,
-    text: "A country with so much to discover. I would definitely like to visit again.",
-    date: "1 month ago",
+    countryId: 1,
+    countryName: "Japan",
+    content:
+      "A country with so much to discover. I would definitely like to visit again.",
+    createdAt: "2026-06-22T10:00:00Z",
+    updatedAt: null,
   },
 ];
 
@@ -30,7 +38,7 @@ export function CountryDetailPage() {
   const { isAuthenticated } = useAuth();
   const [listStatus, setListStatus] = useState(null);
   const [reviews, setReviews] = useState(initialReviews);
-  const country = countries.find((country) => country.id === id);
+  const country = countries.find((country) => country.countryId === Number(id));
 
   if (!country) {
     return (
@@ -61,13 +69,17 @@ export function CountryDetailPage() {
     setListStatus(status);
   }
 
-  function handleReviewSubmit(reviewText, rating) {
+  function handleReviewSubmit(reviewText, reviewRating) {
     const newReview = {
-      id: Date.now(),
+      shareId: Date.now(),
+      userId: 999,
       username: "You",
-      rating,
-      text: reviewText,
-      date: "Just now",
+      countryId: country.countryId,
+      countryName: country.nameCommon,
+      content: reviewText,
+      rating: reviewRating,
+      createdAt: new Date().toISOString(),
+      updatedAt: null,
     };
 
     setReviews((currentReviews) => [newReview, ...currentReviews]);

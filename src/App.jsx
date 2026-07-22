@@ -11,6 +11,13 @@ import { CountryDetailPage } from "./pages/CountryDetailPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { MyListsPage } from "./pages/MyListsPage";
+import { QuizPage } from "./pages/QuizPage";
+import { QuizzesPage } from "./pages/QuizzesPage";
+import { CommunityPage } from "./pages/CommunityPage";
+import { MySharesPage } from "./pages/MySharesPage";
+import { AdminDashboardPage } from "./pages/AdminDashboardPage";
+import { AdminUsersPage } from "./pages/AdminUsersPage";
+import { MyQuizHistoryPage } from "./pages/MyQuizHistoryPage";
 
 
 function Placeholder({ title }) {
@@ -33,12 +40,9 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/countries" element={<CountriesPage />} />
             <Route path="/countries/:id" element={<CountryDetailPage />} />
-            <Route path="/shares" element={<Placeholder title="Community" />} />
-            <Route path="/quizzes" element={<Placeholder title="Quizzes" />} />
-            <Route
-              path="/quizzes/:id"
-              element={<Placeholder title="Play Quiz" />}
-            />
+            <Route path="/shares" element={<CommunityPage />} />
+            <Route path="/quizzes" element={<QuizzesPage />} />
+            <Route path="/quizzes/:id" element={<QuizPage />} />
             <Route
               path="/advanced-features"
               element={<Placeholder title="Advanced Features" />}
@@ -64,7 +68,7 @@ function App() {
               path="/my-shares"
               element={
                 <ProtectedRoute>
-                  <Placeholder title="My Shares" />
+                  <MySharesPage />
                 </ProtectedRoute>
               }
             />
@@ -72,7 +76,7 @@ function App() {
               path="/my-quiz-history"
               element={
                 <ProtectedRoute>
-                  <Placeholder title="My Quiz History" />
+                  <MyQuizHistoryPage />
                 </ProtectedRoute>
               }
             />
@@ -81,15 +85,16 @@ function App() {
               path="/admin"
               element={
                 <AdminRoute>
-                  <Placeholder title="Admin Dashboard" />
+                  <AdminDashboardPage />
                 </AdminRoute>
               }
             />
+
             <Route
               path="/admin/users"
               element={
                 <AdminRoute>
-                  <Placeholder title="Admin Users" />
+                  <AdminUsersPage />
                 </AdminRoute>
               }
             />

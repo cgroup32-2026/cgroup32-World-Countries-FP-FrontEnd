@@ -1,32 +1,15 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { countries } from "../data/countries";
 
-const featuredCountries = [
-  {
-    name: "Japan",
-    code: "JP",
-    region: "Asia",
-    description:
-      "A fascinating blend of ancient tradition and modern innovation.",
-    emoji: "🇯🇵",
-  },
-  {
-    name: "Italy",
-    code: "IT",
-    region: "Europe",
-    description:
-      "Explore centuries of history, culture, art, and unforgettable cuisine.",
-    emoji: "🇮🇹",
-  },
-  {
-    name: "New Zealand",
-    code: "NZ",
-    region: "Oceania",
-    description:
-      "Discover breathtaking landscapes and unforgettable adventures.",
-    emoji: "🇳🇿",
-  },
-];
+const featuredBlurbs = {
+  1: "A fascinating blend of ancient tradition and modern innovation.",
+  2: "Explore centuries of history, culture, art, and unforgettable cuisine.",
+  3: "Discover breathtaking landscapes and unforgettable adventures.",
+};
+const featuredCountries = countries.filter(
+  (c) => c.countryId in featuredBlurbs,
+);
 
 export function HomePage() {
   const { isAuthenticated, user } = useAuth();
@@ -140,12 +123,10 @@ export function HomePage() {
             <p className="text-sm font-semibold uppercase tracking-widest text-amber-400">
               Start exploring
             </p>
-
             <h2 className="mt-2 font-heading text-4xl text-amber-50">
               Featured destinations
             </h2>
           </div>
-
           <Link
             to="/countries"
             className="text-sm font-semibold text-amber-400 hover:text-amber-300"
@@ -157,29 +138,29 @@ export function HomePage() {
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {featuredCountries.map((country) => (
             <Link
-              key={country.code}
-              to={`/countries/${country.code}`}
+              key={country.countryId}
+              to={`/countries/${country.countryId}`}
               className="group overflow-hidden rounded-lg border border-navy-700 bg-navy-900 transition hover:-translate-y-1 hover:border-amber-500"
             >
-              <div className="flex h-48 items-center justify-center bg-navy-800 text-8xl">
-                {country.emoji}
+              <div className="flex h-48 items-center justify-center bg-navy-800">
+                <img
+                  src={country.flagUrl}
+                  alt={`${country.nameCommon} flag`}
+                  className="h-full w-full object-cover"
+                />
               </div>
-
               <div className="p-6">
                 <div className="flex items-center justify-between">
                   <h3 className="text-2xl font-semibold text-amber-50">
-                    {country.name}
+                    {country.nameCommon}
                   </h3>
-
                   <span className="text-sm text-amber-400">
                     {country.region}
                   </span>
                 </div>
-
                 <p className="mt-3 text-sm leading-6 text-amber-50/60">
-                  {country.description}
+                  {featuredBlurbs[country.countryId]}
                 </p>
-
                 <span className="mt-5 inline-block text-sm font-semibold text-amber-400 transition group-hover:translate-x-1">
                   Explore country →
                 </span>
@@ -212,4 +193,3 @@ export function HomePage() {
     </main>
   );
 }
-
