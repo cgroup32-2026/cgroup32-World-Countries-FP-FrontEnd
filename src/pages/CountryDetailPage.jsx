@@ -1,55 +1,90 @@
 import { Link, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { CountryHero } from "../components/countries/CountryHero";
 import { CountryInfo } from "../components/countries/CountryInfo";
 import { CountryActions } from "../components/countries/CountryActions";
 import { CountryReviews } from "../components/countries/CountryReviews";
-import { countries } from "../data/countries";
-
-
-const initialReviews = [
-  {
-    shareId: 1,
-    userId: 101,
-    username: "alex_travels",
-    countryId: 1,
-    countryName: "Japan",
-    content:
-      "Absolutely fascinating. The combination of tradition, food, and modern life makes this an unforgettable destination.",
-    createdAt: "2026-07-08T10:00:00Z",
-    updatedAt: null,
-  },
-  {
-    shareId: 2,
-    userId: 102,
-    username: "worldexplorer",
-    countryId: 1,
-    countryName: "Japan",
-    content:
-      "A country with so much to discover. I would definitely like to visit again.",
-    createdAt: "2026-06-22T10:00:00Z",
-    updatedAt: null,
-  },
-];
+import { countriesApi } from "../api/countriesApi";
+import { sharesApi } from "../api/sharesApi";
+import { listsApi } from "../api/listsApi";
 
 export function CountryDetailPage() {
   const { id } = useParams();
   const { isAuthenticated } = useAuth();
+  const [country, setCountry] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [listStatus, setListStatus] = useState(null);
-  const [reviews, setReviews] = useState(initialReviews);
-  const country = countries.find((country) => country.countryId === Number(id));
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  if (!country) {
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([countriesApi.getById(id), sharesApi.getByCountry(id)])
+      .then(([countryData, reviewsData]) => {
+        setCountry(countryData);
+        setReviews(reviewsData);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setListStatus(null);
+      return;
+    }
+    listsApi
+      .getMine()
+      .then((entries) => {
+        const match = entries.find((e) => e.countryId === Number(id));
+        setListStatus(match ? match.listType : null);
+      })
+      .catch(() => {});
+  }, [id, isAuthenticated]);
+
+  async function handleListChange(newStatus) {
+    const countryId = Number(id);
+    try {
+      if (newStatus === null) {
+        if (listStatus) await listsApi.remove(countryId, listStatus);
+      } else if (listStatus)
+        await listsApi.move(countryId, listStatus, newStatus);
+      else await listsApi.add(countryId, newStatus);
+      setListStatus(newStatus);
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  async function handleReviewSubmit(reviewText, rating) {
+    try {
+      const newReview = await sharesApi.create({
+        countryId: Number(id),
+        content: reviewText,
+        rating,
+      });
+      setReviews((current) => [newReview, ...current]);
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  if (loading)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-amber-50">
+        Loading...
+      </main>
+    );
+
+  if (error || !country) {
     return (
       <main className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-navy-950 px-6 text-center text-amber-50">
         <div>
           <h1 className="font-heading text-4xl">Country not found</h1>
-
           <p className="mt-4 text-amber-50/60">
-            We couldn't find the country you're looking for.
+            {error || "We couldn't find the country you're looking for."}
           </p>
-
           <Link
             to="/countries"
             className="mt-6 inline-block text-amber-400 hover:text-amber-300"
@@ -61,46 +96,19 @@ export function CountryDetailPage() {
     );
   }
 
-  function handleListChange(status) {
-    if (!isAuthenticated) {
-      return;
-    }
-
-    setListStatus(status);
-  }
-
-  function handleReviewSubmit(reviewText, reviewRating) {
-    const newReview = {
-      shareId: Date.now(),
-      userId: 999,
-      username: "You",
-      countryId: country.countryId,
-      countryName: country.nameCommon,
-      content: reviewText,
-      rating: reviewRating,
-      createdAt: new Date().toISOString(),
-      updatedAt: null,
-    };
-
-    setReviews((currentReviews) => [newReview, ...currentReviews]);
-  }
-
   return (
     <main className="min-h-[calc(100vh-80px)] bg-navy-950 text-amber-50">
       <CountryHero country={country} />
-
       <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
           <div>
             <CountryInfo country={country} />
-
             <CountryReviews
               reviews={reviews}
               isAuthenticated={isAuthenticated}
               onReviewSubmit={handleReviewSubmit}
             />
           </div>
-
           <aside>
             <CountryActions
               isAuthenticated={isAuthenticated}

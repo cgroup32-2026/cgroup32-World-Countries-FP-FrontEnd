@@ -1,7 +1,6 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 import { CountryCard } from "../components/countries/CountryCard";
-import { countries } from "../data/countries";
+import { countriesApi } from "../api/countriesApi";
 
 const regions = [
   "All Regions",
@@ -14,22 +13,46 @@ const regions = [
 ];
 
 export function CountriesPage() {
+  const [countries, setCountries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("All Regions");
+
+  useEffect(() => {
+    countriesApi
+      .getAll()
+      .then(setCountries)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   const filteredCountries = useMemo(() => {
     return countries.filter((country) => {
       const matchesSearch =
         country.nameCommon.toLowerCase().includes(searchTerm.toLowerCase()) ||
         country.ccaCode3.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        country.capital.toLowerCase().includes(searchTerm.toLowerCase());
-
+        (country.capital ?? "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
       const matchesRegion =
         selectedRegion === "All Regions" || country.region === selectedRegion;
-
       return matchesSearch && matchesRegion;
     });
-  }, [searchTerm, selectedRegion]);
+  }, [countries, searchTerm, selectedRegion]);
+
+  if (loading)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-amber-50">
+        Loading countries...
+      </main>
+    );
+  if (error)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-red-300">
+        {error}
+      </main>
+    );
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-navy-950 text-amber-50">
