@@ -6,6 +6,12 @@ import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 import { formatMonthYear } from "../utils/format";
+import { ContinentPreferences } from "../components/profile/ContinentPreferences";
+import { LanguagePreferences } from "../components/profile/LanguagePreferences";
+import {
+  myPreferredContinents,
+  myLanguagePreferences,
+} from "../data/myPreferences";
 
 export function ProfilePage() {
   const [profile, setProfile] = useState(mockProfile);
@@ -105,6 +111,9 @@ export function ProfilePage() {
             </Button>
           </form>
         </Card>
+
+        <ContinentPreferences initialSelected={myPreferredContinents} />
+        <LanguagePreferences initialSelected={myLanguagePreferences} />
       </div>
     </main>
   );

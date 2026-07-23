@@ -1,34 +1,6 @@
 export const myQuizAttempts = [
-  {
-    AttemptId: 1,
-    QuizId: 1,
-    QuizTitle: "World Capitals",
-    Score: 8,
-    TimeTakenSeconds: 142,
-    CompletedAt: "2026-07-20T14:30:00Z",
-  },
-  {
-    AttemptId: 2,
-    QuizId: 2,
-    QuizTitle: "European Geography",
-    Score: 7,
-    TimeTakenSeconds: 198,
-    CompletedAt: "2026-07-18T11:15:00Z",
-  },
-  {
-    AttemptId: 3,
-    QuizId: 1,
-    QuizTitle: "World Capitals",
-    Score: 10,
-    TimeTakenSeconds: 126,
-    CompletedAt: "2026-07-15T09:45:00Z",
-  },
-  {
-    AttemptId: 4,
-    QuizId: 3,
-    QuizTitle: "Flags of the World",
-    Score: 6,
-    TimeTakenSeconds: 215,
-    CompletedAt: "2026-07-10T16:20:00Z",
-  },
+  { attemptId: 1, quizId: 1, quizTitle: "World Capitals", score: 4, timeTakenSeconds: 42, completedAt: "2026-07-20T14:30:00Z" },
+  { attemptId: 2, quizId: 2, quizTitle: "Flags & Geography", score: 3, timeTakenSeconds: 58, completedAt: "2026-07-18T11:15:00Z" },
+  { attemptId: 3, quizId: 1, quizTitle: "World Capitals", score: 5, timeTakenSeconds: 36, completedAt: "2026-07-15T09:45:00Z" },
+  { attemptId: 4, quizId: 2, quizTitle: "Flags & Geography", score: 4, timeTakenSeconds: 47, completedAt: "2026-07-10T16:20:00Z" },
 ];
