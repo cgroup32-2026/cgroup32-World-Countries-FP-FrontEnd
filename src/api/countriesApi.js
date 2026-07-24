@@ -10,4 +10,7 @@ export const countriesApi = {
     });
     return apiClient.get(`/Countries/search?${query.toString()}`);
   },
+  create: (data) => apiClient.post("/Countries", data),
+  update: (id, data) => apiClient.put(`/Countries/${id}`, data),
+  remove: (id) => apiClient.delete(`/Countries/${id}`),
 };

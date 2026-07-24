@@ -9,6 +9,9 @@ import { Button } from "../components/ui/Button";
 import { ContinentPreferences } from "../components/profile/ContinentPreferences";
 import { LanguagePreferences } from "../components/profile/LanguagePreferences";
 import { formatMonthYear } from "../utils/format";
+import { Link } from "react-router-dom";
+import { ChangePasswordForm } from "../components/profile/ChangePasswordForm";
+
 
 export function ProfilePage() {
   const [profile, setProfile] = useState(null);
@@ -101,10 +104,26 @@ export function ProfilePage() {
         </Card>
 
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Visited Countries" value={stats.visited} />
-          <StatCard title="Want to Visit" value={stats.wishlist} />
-          <StatCard title="Reviews Posted" value={stats.reviews} />
-          <StatCard title="Quizzes Played" value={stats.quizzes} />
+          <StatCard
+            title="Visited Countries"
+            value={stats.visited}
+            to="/my-lists"
+          />
+          <StatCard
+            title="Want to Visit"
+            value={stats.wishlist}
+            to="/my-lists"
+          />
+          <StatCard
+            title="Reviews Posted"
+            value={stats.reviews}
+            to="/my-shares"
+          />
+          <StatCard
+            title="Quizzes Played"
+            value={stats.quizzes}
+            to="/my-quiz-history"
+          />
         </section>
 
         <Card className="shadow-lg">
@@ -123,6 +142,7 @@ export function ProfilePage() {
               value={profile.email}
               onChange={handleChange}
             />
+
             <div className="flex items-center gap-4">
               <Button type="submit" disabled={saving}>
                 {saving ? "Saving..." : "Save Changes"}
@@ -131,7 +151,7 @@ export function ProfilePage() {
             </div>
           </form>
         </Card>
-
+        <ChangePasswordForm />
         <ContinentPreferences />
         <LanguagePreferences />
       </div>
@@ -139,11 +159,22 @@ export function ProfilePage() {
   );
 }
 
-function StatCard({ title, value }) {
-  return (
-    <Card className="text-center shadow-lg">
+
+function StatCard({ title, value, to }) {
+  const content = (
+    <>
       <div className="text-4xl font-bold text-amber-400">{value}</div>
       <div className="mt-2 text-sm text-amber-50/60">{title}</div>
-    </Card>
+    </>
   );
+  if (to)
+    return (
+      <Link
+        to={to}
+        className="block rounded-lg border border-navy-700 bg-navy-900 p-6 text-center shadow-lg transition hover:-translate-y-1 hover:border-amber-500"
+      >
+        {content}
+      </Link>
+    );
+  return <Card className="text-center shadow-lg">{content}</Card>;
 }

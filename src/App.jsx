@@ -18,6 +18,10 @@ import { MySharesPage } from "./pages/MySharesPage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { MyQuizHistoryPage } from "./pages/MyQuizHistoryPage";
+import { AdminCountriesPage } from "./pages/AdminCountriesPage";
+import { AdminLoginHistoryPage } from "./pages/AdminLoginHistoryPage";
+
+
 
 
 function Placeholder({ title }) {
@@ -95,6 +99,24 @@ function App() {
               element={
                 <AdminRoute>
                   <AdminUsersPage />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/admin/countries"
+              element={
+                <AdminRoute>
+                  <AdminCountriesPage />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/admin/login-history"
+              element={
+                <AdminRoute>
+                  <AdminLoginHistoryPage />
                 </AdminRoute>
               }
             />

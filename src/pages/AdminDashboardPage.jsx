@@ -59,12 +59,27 @@ export function AdminDashboardPage() {
           />
         </section>
         <div className="mt-8">
-          <Link
-            to="/admin/users"
-            className="inline-block rounded-md bg-amber-500 px-5 py-2.5 font-semibold text-navy-950 transition hover:bg-amber-400"
-          >
-            Manage Users →
-          </Link>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Link
+              to="/admin/users"
+              className="inline-block rounded-md bg-amber-500 px-5 py-2.5 font-semibold text-navy-950 transition hover:bg-amber-400"
+            >
+              Manage Users →
+            </Link>
+
+            <Link
+              to="/admin/countries"
+              className="inline-block rounded-md border border-amber-500 px-5 py-2.5 font-semibold text-amber-400 transition hover:bg-amber-500 hover:text-navy-950"
+            >
+              Manage Countries →
+            </Link>
+            <Link
+              to="/admin/login-history"
+              className="inline-block rounded-md border border-amber-500 px-5 py-2.5 font-semibold text-amber-400 transition hover:bg-amber-500 hover:text-navy-950"
+            >
+              Login History →
+            </Link>
+          </div>
         </div>
       </div>
     </main>
