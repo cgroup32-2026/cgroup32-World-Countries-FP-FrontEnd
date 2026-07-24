@@ -1,28 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "../ui/Card";
 import { Button } from "../ui/Button";
-import { languages } from "../../data/languages";
+import { preferencesApi } from "../../api/preferencesApi";
 
 const LEVELS = ["Beginner", "Intermediate", "Advanced", "Native"];
 
-export function LanguagePreferences({ initialSelected }) {
-  const [myLanguages, setMyLanguages] = useState(initialSelected);
+export function LanguagePreferences() {
+  const [allLanguages, setAllLanguages] = useState([]);
+  const [myLanguages, setMyLanguages] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [pickerLanguageId, setPickerLanguageId] = useState("");
   const [pickerLevel, setPickerLevel] = useState("Beginner");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const availableToAdd = languages.filter(
+  useEffect(() => {
+    Promise.all([
+      preferencesApi.getAllLanguages(),
+      preferencesApi.getMyLanguages(),
+    ])
+      .then(([all, mine]) => {
+        setAllLanguages(all);
+        setMyLanguages(mine);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const availableToAdd = allLanguages.filter(
     (lang) => !myLanguages.some((ml) => ml.languageId === lang.languageId),
   );
 
   function handleAdd() {
     if (!pickerLanguageId) return;
-    const language = languages.find(
+    const language = allLanguages.find(
       (l) => l.languageId === Number(pickerLanguageId),
     );
     if (!language) return;
-
     setSaved(false);
     setMyLanguages((current) => [
       ...current,
@@ -55,12 +68,21 @@ export function LanguagePreferences({ initialSelected }) {
 
   async function handleSave() {
     setSaving(true);
-    // Later: await preferencesApi.setLanguages(myLanguages.map(({ languageId, level }) => ({ languageId, level })));
-    setTimeout(() => {
-      setSaving(false);
+    try {
+      const payload = myLanguages.map(({ languageId, level }) => ({
+        languageId,
+        level,
+      }));
+      await preferencesApi.setMyLanguages(payload);
       setSaved(true);
-    }, 400);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
   }
+
+  if (loading) return <Card>Loading languages...</Card>;
 
   return (
     <Card>
@@ -68,7 +90,6 @@ export function LanguagePreferences({ initialSelected }) {
       <p className="mt-1 text-sm text-amber-50/60">
         Add the languages you speak, and how well you know them.
       </p>
-
       <div className="mt-5 flex flex-wrap items-end gap-3">
         <div>
           <label className="mb-1 block text-xs text-amber-50/50">
@@ -110,7 +131,6 @@ export function LanguagePreferences({ initialSelected }) {
           Add
         </Button>
       </div>
-
       <div className="mt-6 space-y-2">
         {myLanguages.length === 0 ? (
           <p className="text-sm text-amber-50/40">No languages added yet.</p>
@@ -147,7 +167,6 @@ export function LanguagePreferences({ initialSelected }) {
           ))
         )}
       </div>
-
       <div className="mt-6 flex items-center gap-4">
         <Button onClick={handleSave} disabled={saving}>
           {saving ? "Saving..." : "Save Languages"}

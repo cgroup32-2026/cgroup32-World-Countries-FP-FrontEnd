@@ -1,39 +1,75 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { mockProfile } from "../data/profile";
-import { myListEntries } from "../data/myLists";
+import { useEffect, useState } from "react";
+import { authApi } from "../api/authApi";
+import { listsApi } from "../api/listsApi";
+import { sharesApi } from "../api/sharesApi";
+import { quizzesApi } from "../api/quizzesApi";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
-import { formatMonthYear } from "../utils/format";
 import { ContinentPreferences } from "../components/profile/ContinentPreferences";
 import { LanguagePreferences } from "../components/profile/LanguagePreferences";
-import {
-  myPreferredContinents,
-  myLanguagePreferences,
-} from "../data/myPreferences";
+import { formatMonthYear } from "../utils/format";
 
 export function ProfilePage() {
-  const [profile, setProfile] = useState(mockProfile);
+  const [profile, setProfile] = useState(null);
+  const [stats, setStats] = useState({
+    visited: 0,
+    wishlist: 0,
+    reviews: 0,
+    quizzes: 0,
+  });
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    Promise.all([
+      authApi.getMe(),
+      listsApi.getMine(),
+      sharesApi.getMine(),
+      quizzesApi.getMyAttempts(),
+    ])
+      .then(([me, lists, shares, attempts]) => {
+        setProfile(me);
+        setStats({
+          visited: lists.filter((l) => l.listType === "Visited").length,
+          wishlist: lists.filter((l) => l.listType === "WantToVisit").length,
+          reviews: shares.length,
+          quizzes: attempts.length,
+        });
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
     setProfile((current) => ({ ...current, [name]: value }));
+    setSaved(false);
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
-
-    // Later: only email + fullName are sent — backend rejects a username change
-    // await authApi.updateProfile({ email: profile.email, fullName: profile.fullName });
-
-    setTimeout(() => {
+    try {
+      const updated = await authApi.updateProfile({
+        email: profile.email,
+        fullName: profile.fullName,
+      });
+      setProfile(updated);
+      setSaved(true);
+    } catch (err) {
+      alert(err.message);
+    } finally {
       setSaving(false);
-      alert("Profile saved! (Mock)");
-    }, 400);
+    }
   }
+
+  if (loading || !profile)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-amber-50">
+        Loading...
+      </main>
+    );
 
   const initials = profile.fullName
     ? profile.fullName
@@ -43,13 +79,6 @@ export function ProfilePage() {
         .slice(0, 2)
         .toUpperCase()
     : profile.username.slice(0, 2).toUpperCase();
-
-  const visitedCount = myListEntries.filter(
-    (e) => e.listType === "Visited",
-  ).length;
-  const wishlistCount = myListEntries.filter(
-    (e) => e.listType === "WantToVisit",
-  ).length;
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-navy-950 px-6 py-10 text-amber-50">
@@ -72,22 +101,10 @@ export function ProfilePage() {
         </Card>
 
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Visited Countries" value={visitedCount} />
-          <StatCard title="Want to Visit" value={wishlistCount} />
-          <Link to="/my-shares">
-            <StatCard
-              title="Reviews Posted"
-              value={profile.stats.reviews}
-              clickable
-            />
-          </Link>
-          <Link to="/my-quiz-history">
-            <StatCard
-              title="Quizzes Played"
-              value={profile.stats.quizzes}
-              clickable
-            />
-          </Link>
+          <StatCard title="Visited Countries" value={stats.visited} />
+          <StatCard title="Want to Visit" value={stats.wishlist} />
+          <StatCard title="Reviews Posted" value={stats.reviews} />
+          <StatCard title="Quizzes Played" value={stats.quizzes} />
         </section>
 
         <Card className="shadow-lg">
@@ -96,7 +113,7 @@ export function ProfilePage() {
             <Input
               label="Full Name"
               name="fullName"
-              value={profile.fullName}
+              value={profile.fullName ?? ""}
               onChange={handleChange}
             />
             <Input
@@ -106,37 +123,27 @@ export function ProfilePage() {
               value={profile.email}
               onChange={handleChange}
             />
-            <Button type="submit" disabled={saving}>
-              {saving ? "Saving..." : "Save Changes"}
-            </Button>
+            <div className="flex items-center gap-4">
+              <Button type="submit" disabled={saving}>
+                {saving ? "Saving..." : "Save Changes"}
+              </Button>
+              {saved && <span className="text-sm text-green-400">Saved!</span>}
+            </div>
           </form>
         </Card>
 
-        <ContinentPreferences initialSelected={myPreferredContinents} />
-        <LanguagePreferences initialSelected={myLanguagePreferences} />
+        <ContinentPreferences />
+        <LanguagePreferences />
       </div>
     </main>
   );
 }
 
-function StatCard({ title, value, clickable = false }) {
+function StatCard({ title, value }) {
   return (
-    <Card
-      className={`text-center shadow-lg ${
-        clickable
-          ? "transition hover:-translate-y-1 hover:border-amber-500"
-          : ""
-      }`}
-    >
+    <Card className="text-center shadow-lg">
       <div className="text-4xl font-bold text-amber-400">{value}</div>
-
       <div className="mt-2 text-sm text-amber-50/60">{title}</div>
-
-      {clickable && (
-        <div className="mt-3 text-xs font-semibold text-amber-400">
-          View My Shares →
-        </div>
-      )}
     </Card>
   );
 }

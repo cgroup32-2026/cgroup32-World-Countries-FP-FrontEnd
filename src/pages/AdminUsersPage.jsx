@@ -1,28 +1,59 @@
-import { useState } from "react";
-import { mockAdminUsers } from "../data/admin";
+import { useEffect, useState } from "react";
+import { adminApi } from "../api/adminApi";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 
 export function AdminUsersPage() {
-  const [users, setUsers] = useState(mockAdminUsers);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Later: await adminApi.setLocked(userId, !isLocked), then re-fetch or update local state from the response
-  function toggleLocked(userId) {
-    setUsers((current) =>
-      current.map((u) =>
-        u.userId === userId ? { ...u, isLocked: !u.isLocked } : u,
-      ),
-    );
+  useEffect(() => {
+    adminApi
+      .getUsers()
+      .then(setUsers)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  async function toggleLocked(user) {
+    try {
+      await adminApi.setLocked(user.userId, !user.isLocked);
+      setUsers((current) =>
+        current.map((u) =>
+          u.userId === user.userId ? { ...u, isLocked: !u.isLocked } : u,
+        ),
+      );
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
-  // Later: await adminApi.setCanShare(userId, !canShare)
-  function toggleSharing(userId) {
-    setUsers((current) =>
-      current.map((u) =>
-        u.userId === userId ? { ...u, canShare: !u.canShare } : u,
-      ),
-    );
+  async function toggleSharing(user) {
+    try {
+      await adminApi.setCanShare(user.userId, !user.canShare);
+      setUsers((current) =>
+        current.map((u) =>
+          u.userId === user.userId ? { ...u, canShare: !u.canShare } : u,
+        ),
+      );
+    } catch (err) {
+      alert(err.message);
+    }
   }
+
+  if (loading)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-amber-50">
+        Loading...
+      </main>
+    );
+  if (error)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-red-300">
+        {error}
+      </main>
+    );
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-navy-950 px-6 py-10 text-amber-50">
@@ -33,7 +64,6 @@ export function AdminUsersPage() {
             Manage account access and sharing permissions.
           </p>
         </header>
-
         <Card className="overflow-x-auto p-0">
           <table className="w-full min-w-[900px] text-left text-sm">
             <thead className="border-b border-navy-700 bg-navy-800">
@@ -90,14 +120,14 @@ export function AdminUsersPage() {
                       <Button
                         variant="outline"
                         className="px-3 py-1.5 text-xs"
-                        onClick={() => toggleLocked(user.userId)}
+                        onClick={() => toggleLocked(user)}
                       >
                         {user.isLocked ? "Unlock" : "Lock"}
                       </Button>
                       <Button
                         variant="outline"
                         className="px-3 py-1.5 text-xs"
-                        onClick={() => toggleSharing(user.userId)}
+                        onClick={() => toggleSharing(user)}
                       >
                         {user.canShare ? "Block Sharing" : "Allow Sharing"}
                       </Button>

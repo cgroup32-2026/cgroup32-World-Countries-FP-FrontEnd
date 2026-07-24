@@ -1,10 +1,34 @@
-import { mockAdminStats } from "../data/admin";
+import { useEffect, useState } from "react";
 import { Card } from "../components/ui/Card";
 import { Link } from "react-router-dom";
+import { adminApi } from "../api/adminApi";
 import { formatNumber } from "../utils/format";
 
 export function AdminDashboardPage() {
-  const stats = mockAdminStats;
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    adminApi
+      .getStats()
+      .then(setStats)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-amber-50">
+        Loading...
+      </main>
+    );
+  if (error)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-red-300">
+        {error}
+      </main>
+    );
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-navy-950 px-6 py-10 text-amber-50">
@@ -17,7 +41,6 @@ export function AdminDashboardPage() {
             Monitor World Countries usage and activity.
           </p>
         </header>
-
         <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <AdminStatCard label="Total Users" value={stats.totalUsers} />
           <AdminStatCard label="Logins Today" value={stats.loginsToday} />
@@ -35,7 +58,6 @@ export function AdminDashboardPage() {
             value={stats.totalQuizAttempts}
           />
         </section>
-
         <div className="mt-8">
           <Link
             to="/admin/users"
