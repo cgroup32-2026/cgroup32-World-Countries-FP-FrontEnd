@@ -18,7 +18,7 @@ async function request(path, options = {}) {
       const errorBody = await response.json();
       errorMessage = errorBody.message || errorBody.title || errorMessage;
     } catch {
-      // response wasn't JSON — keep the default message
+      // response was not json so  keep the default message
     }
     throw new Error(errorMessage);
   }

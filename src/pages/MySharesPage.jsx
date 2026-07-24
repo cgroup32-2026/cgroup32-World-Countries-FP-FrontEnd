@@ -1,48 +1,67 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ShareCard } from "../components/shares/ShareCard";
 import { ShareFormModal } from "../components/shares/ShareFormModal";
-import { shares as initialShares } from "../data/shares";
+import { sharesApi } from "../api/sharesApi";
 
 export function MySharesPage() {
-  // Mock-only: pretending userId 101 is "me". Real version calls sharesApi.getMine()
-  // (GET /Shares/me) instead — the server already filters to the logged-in user,
-  // this whole .filter() line goes away entirely, not just the field name.
-  const [shares, setShares] = useState(
-    initialShares.filter((share) => share.userId === 101),
-  );
-
+  const [shares, setShares] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [editingShare, setEditingShare] = useState(null);
+
+  useEffect(() => {
+    sharesApi
+      .getMine()
+      .then(setShares)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   function handleEdit(share) {
     setEditingShare(share);
   }
 
-  function handleDelete(shareId) {
+  async function handleDelete(shareId) {
     const confirmed = window.confirm(
       "Are you sure you want to delete this share?",
     );
     if (!confirmed) return;
-
-    setShares((current) =>
-      current.filter((share) => share.shareId !== shareId),
-    );
+    try {
+      await sharesApi.remove(shareId);
+      setShares((current) => current.filter((s) => s.shareId !== shareId));
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
-  function handleUpdateShare(updatedData) {
-    setShares((current) =>
-      current.map((share) =>
-        share.shareId === editingShare.shareId
-          ? {
-              ...share,
-              content: updatedData.content,
-              rating: updatedData.rating,
-              updatedAt: new Date().toISOString(),
-            }
-          : share,
-      ),
-    );
-    setEditingShare(null);
+  async function handleUpdateShare(updatedData) {
+    try {
+      await sharesApi.update(editingShare.shareId, updatedData);
+      setShares((current) =>
+        current.map((s) =>
+          s.shareId === editingShare.shareId
+            ? { ...s, ...updatedData, updatedAt: new Date().toISOString() }
+            : s,
+        ),
+      );
+      setEditingShare(null);
+    } catch (err) {
+      alert(err.message);
+    }
   }
+
+  if (loading)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-amber-50">
+        Loading...
+      </main>
+    );
+  if (error)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-red-300">
+        {error}
+      </main>
+    );
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-navy-950 px-6 py-10 text-amber-50">

@@ -1,27 +1,33 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { quizzes } from "../data/quizzes";
-import { quizQuestions } from "../data/quizQuestions";
-import { mockSubmitQuiz } from "../data/mockQuizSubmit";
+import { quizzesApi } from "../api/quizzesApi";
 
 export function QuizPage() {
   const { id } = useParams();
-  const quiz = useMemo(
-    () => quizzes.find((q) => q.quizId === Number(id)),
-    [id],
-  );
-  const questions = useMemo(() => quizQuestions[id] || [], [id]);
+  const [quiz, setQuiz] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [started, setStarted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [answers, setAnswers] = useState([]); // collected as the player progresses — never graded until submit
+  const [answers, setAnswers] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
-  const [result, setResult] = useState(null); // only populated once "submitted"
+  const [result, setResult] = useState(null);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
-    if (quiz?.timeLimitSeconds) setTimeLeft(quiz.timeLimitSeconds);
-  }, [quiz]);
+    quizzesApi
+      .getQuestions(id)
+      .then((data) => {
+        setQuiz(data);
+        setTimeLeft(data.timeLimitSeconds);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  const questions = quiz?.questions ?? [];
 
   function handleStartQuiz() {
     setTimeLeft(quiz.timeLimitSeconds);
@@ -37,17 +43,20 @@ export function QuizPage() {
     setTimeLeft(quiz?.timeLimitSeconds ?? 0);
   }
 
-  // Submits whatever answers were confirmed so far — same function whether
-  // the player finishes normally or time runs out.
-  function submitQuiz(finalAnswers, timeTakenSeconds) {
-    // Later: const submitted = await quizzesApi.submit(quiz.quizId, { answers: finalAnswers, timeTakenSeconds });
-    const submitted = mockSubmitQuiz(finalAnswers, timeTakenSeconds);
-    setResult(submitted);
+  async function submitQuiz(finalAnswers, timeTakenSeconds) {
+    try {
+      const submitted = await quizzesApi.submit(quiz.quizId, {
+        answers: finalAnswers,
+        timeTakenSeconds,
+      });
+      setResult(submitted);
+    } catch (err) {
+      setSubmitError(err.message);
+    }
   }
 
   useEffect(() => {
     if (!started || result || !quiz) return;
-
     const timer = setInterval(() => {
       setTimeLeft((current) => {
         if (current <= 1) {
@@ -58,18 +67,22 @@ export function QuizPage() {
         return current - 1;
       });
     }, 1000);
-
     return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [started, result, quiz]);
 
-  if (!quiz) {
+  if (loading)
     return (
       <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-amber-50">
-        Quiz not found.
+        Loading...
       </main>
     );
-  }
+  if (error || !quiz)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-red-300">
+        {error || "Quiz not found."}
+      </main>
+    );
 
   if (!started) {
     return (
@@ -79,12 +92,11 @@ export function QuizPage() {
           {quiz.description && (
             <p className="mt-3 text-amber-50/60">{quiz.description}</p>
           )}
-
           <div className="mt-8 grid grid-cols-2 gap-6">
             <div>
               <p className="text-sm text-amber-50/50">Questions</p>
               <p className="mt-1 text-3xl font-bold text-amber-400">
-                {quiz.questionCount}
+                {questions.length}
               </p>
             </div>
             <div>
@@ -94,11 +106,9 @@ export function QuizPage() {
               </p>
             </div>
           </div>
-
           <p className="mt-10 text-amber-50/70">
             Once you answer a question you can't return to it.
           </p>
-
           <button
             onClick={handleStartQuiz}
             className="mt-8 rounded bg-amber-500 px-8 py-3 font-semibold text-navy-950 hover:bg-amber-400"
@@ -110,6 +120,13 @@ export function QuizPage() {
     );
   }
 
+  if (submitError)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-red-300">
+        {submitError}
+      </main>
+    );
+
   if (result) {
     const percentage = result.totalQuestions
       ? Math.round((result.score / result.totalQuestions) * 100)
@@ -118,7 +135,6 @@ export function QuizPage() {
     if (percentage >= 90) message = "Outstanding!";
     else if (percentage >= 75) message = "Great job!";
     else if (percentage >= 50) message = "Nice effort!";
-
     const minutes = Math.floor(result.timeTakenSeconds / 60);
     const seconds = result.timeTakenSeconds % 60;
 
@@ -130,7 +146,6 @@ export function QuizPage() {
             Quiz Complete
           </h1>
           <p className="mt-2 text-amber-50/70">{quiz.title}</p>
-
           <div className="mt-10 grid grid-cols-3 gap-6">
             <div>
               <p className="text-sm text-amber-50/50">Score</p>
@@ -151,10 +166,7 @@ export function QuizPage() {
               </p>
             </div>
           </div>
-
           <p className="mt-10 text-xl text-amber-50">{message}</p>
-
-          {/* Per-question review — this comes free from matching the real API's response shape */}
           <div className="mt-8 space-y-2 text-left">
             {result.results.map((r, i) => (
               <div
@@ -168,7 +180,6 @@ export function QuizPage() {
               </div>
             ))}
           </div>
-
           <div className="mt-10 flex justify-center gap-4">
             <button
               onClick={restartQuiz}
@@ -199,12 +210,10 @@ export function QuizPage() {
       { questionId: question.questionId, selectedOption: selectedAnswer },
     ];
     setAnswers(updatedAnswers);
-
     if (currentIndex === questions.length - 1) {
       submitQuiz(updatedAnswers, quiz.timeLimitSeconds - timeLeft);
       return;
     }
-
     setCurrentIndex((current) => current + 1);
     setSelectedAnswer(null);
   }
@@ -225,25 +234,19 @@ export function QuizPage() {
               )}:${(timeLeft % 60).toString().padStart(2, "0")}`}
           </div>
         </div>
-
         <div className="mb-3 flex justify-between text-sm text-amber-50/60">
           <span>
             Question {currentIndex + 1} / {questions.length}
           </span>
         </div>
-
         <div className="mb-8 h-3 overflow-hidden rounded-full bg-navy-800">
           <div
             className="h-full bg-amber-500 transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
-
         <div className="rounded-lg border border-navy-700 bg-navy-900 p-8">
-          <h2 className="text-2xl font-semibold">
-            {question?.questionText ?? "No question available."}
-          </h2>
-
+          <h2 className="text-2xl font-semibold">{question?.questionText}</h2>
           <div className="mt-8 space-y-4">
             {[
               ["A", question?.optionA],
@@ -260,7 +263,6 @@ export function QuizPage() {
               </button>
             ))}
           </div>
-
           <div className="mt-8 text-right">
             <button
               disabled={selectedAnswer === null}
