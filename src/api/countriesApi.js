@@ -3,6 +3,7 @@ import { apiClient } from "./apiClient";
 export const countriesApi = {
   getAll: () => apiClient.get("/Countries"),
   getById: (id) => apiClient.get(`/Countries/${id}`),
+  getLandmarks: (id) => apiClient.get(`/Countries/${id}/landmarks`),
   search: (params) => {
     const query = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {

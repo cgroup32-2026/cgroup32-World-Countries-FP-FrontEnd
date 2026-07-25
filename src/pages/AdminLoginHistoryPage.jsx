@@ -14,8 +14,11 @@ export function AdminLoginHistoryPage() {
 
   useEffect(() => {
     setLoading(true);
+    const [year, month, day] = selectedDate.split("-").map(Number);
+    const fromLocal = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const toLocal = new Date(year, month - 1, day + 1, 0, 0, 0, 0);
     adminApi
-      .getLoginHistory(selectedDate)
+      .getLoginHistory(fromLocal.toISOString(), toLocal.toISOString())
       .then(setEntries)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));

@@ -8,6 +8,8 @@ import { CountryReviews } from "../components/countries/CountryReviews";
 import { countriesApi } from "../api/countriesApi";
 import { sharesApi } from "../api/sharesApi";
 import { listsApi } from "../api/listsApi";
+import { CountryLandmarks } from "../components/countries/CountryLandmarks";
+
 
 export function CountryDetailPage() {
   const { id } = useParams();
@@ -103,6 +105,7 @@ export function CountryDetailPage() {
         <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
           <div>
             <CountryInfo country={country} />
+            <CountryLandmarks countryId={country.countryId} />
             <CountryReviews
               reviews={reviews}
               isAuthenticated={isAuthenticated}

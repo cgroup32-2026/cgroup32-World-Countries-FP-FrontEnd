@@ -5,5 +5,5 @@ export const adminApi = {
   setLocked: (userId, isLocked) => apiClient.put(`/Admin/users/${userId}/lock`, { isLocked }),
   setCanShare: (userId, canShare) => apiClient.put(`/Admin/users/${userId}/sharing`, { canShare }),
   getStats: () => apiClient.get("/Admin/stats"),
-  getLoginHistory: (date) => apiClient.get(`/Admin/login-history${date ? `?date=${date}` : ""}`)
+  getLoginHistory: (fromIso, toIso) => apiClient.get(`/Admin/login-history?from=${encodeURIComponent(fromIso)}&to=${encodeURIComponent(toIso)}`),
 };

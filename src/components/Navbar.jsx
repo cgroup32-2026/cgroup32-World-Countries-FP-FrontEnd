@@ -22,6 +22,13 @@ export function Navbar() {
         <Link to="/shares" className="hover:text-amber-400 transition">
           Community
         </Link>
+        <Link to="/map" className="hover:text-amber-400 transition">
+          Map
+        </Link>
+        <Link to="/game" className="hover:text-amber-400 transition">
+          GeoGame
+        </Link>
+
         {isAuthenticated && (
           <>
             <Link to="/my-lists" className="hover:text-amber-400 transition">

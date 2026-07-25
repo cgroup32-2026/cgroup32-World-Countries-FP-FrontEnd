@@ -20,6 +20,11 @@ import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { MyQuizHistoryPage } from "./pages/MyQuizHistoryPage";
 import { AdminCountriesPage } from "./pages/AdminCountriesPage";
 import { AdminLoginHistoryPage } from "./pages/AdminLoginHistoryPage";
+import { MapPage } from "./pages/MapPage";
+import { GeoGamePage } from "./pages/GeoGamePage";
+
+
+
 
 
 
@@ -45,6 +50,8 @@ function App() {
             <Route path="/countries" element={<CountriesPage />} />
             <Route path="/countries/:id" element={<CountryDetailPage />} />
             <Route path="/shares" element={<CommunityPage />} />
+            <Route path="/map" element={<MapPage />} />
+            <Route path="/game" element={<GeoGamePage />} />
             <Route path="/quizzes" element={<QuizzesPage />} />
             <Route path="/quizzes/:id" element={<QuizPage />} />
             <Route
