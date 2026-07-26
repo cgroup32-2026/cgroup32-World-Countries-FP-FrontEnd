@@ -7,10 +7,10 @@ import { preferencesApi } from "../api/preferencesApi";
 const regions = [
   "All Regions",
   "Africa",
+  "Antarctica",
   "Asia",
   "Europe",
-  "North America",
-  "South America",
+  "Americas",
   "Oceania",
 ];
 

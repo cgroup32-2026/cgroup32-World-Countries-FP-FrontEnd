@@ -22,6 +22,8 @@ import { AdminCountriesPage } from "./pages/AdminCountriesPage";
 import { AdminLoginHistoryPage } from "./pages/AdminLoginHistoryPage";
 import { MapPage } from "./pages/MapPage";
 import { GeoGamePage } from "./pages/GeoGamePage";
+import { GeoLeaderboardPage } from "./pages/GeoLeaderboardPage";
+
 
 
 
@@ -54,11 +56,11 @@ function App() {
             <Route path="/game" element={<GeoGamePage />} />
             <Route path="/quizzes" element={<QuizzesPage />} />
             <Route path="/quizzes/:id" element={<QuizPage />} />
+            <Route path="/leaderboard" element={<GeoLeaderboardPage />} />;
             <Route
               path="/advanced-features"
               element={<Placeholder title="Advanced Features" />}
             />
-
             <Route
               path="/profile"
               element={
@@ -91,7 +93,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/admin"
               element={
@@ -100,7 +101,6 @@ function App() {
                 </AdminRoute>
               }
             />
-
             <Route
               path="/admin/users"
               element={
@@ -109,7 +109,6 @@ function App() {
                 </AdminRoute>
               }
             />
-
             <Route
               path="/admin/countries"
               element={
@@ -118,7 +117,6 @@ function App() {
                 </AdminRoute>
               }
             />
-
             <Route
               path="/admin/login-history"
               element={
