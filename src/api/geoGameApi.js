@@ -6,4 +6,5 @@ export const geoGameApi = {
   getLeaderboard: (modeCode) => apiClient.get(`/GeoGame/leaderboard/${modeCode}`),
   getTotalLeaderboard: () => apiClient.get("/GeoGame/leaderboard-total"),
   getMyAttempts: () => apiClient.get("/GeoGame/me/attempts"),
+  getLandmarkPool: () => apiClient.get("/GeoGame/landmarks")
 };

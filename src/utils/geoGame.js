@@ -1,4 +1,4 @@
-export const INITIAL_TIME_SECONDS = 15;
+export const INITIAL_TIME_SECONDS = 30;
 export const MAX_BANK_SECONDS = 60;
 const MIN_RADIUS_KM = 50; // floor so tiny countries (Vatican, Monaco) stay playable
 
@@ -42,9 +42,9 @@ export function deriveRoundCount(poolSize) {
   return Math.min(20, Math.max(5, Math.round(poolSize / 3)));
 }
 
-export function regionToModeCode(region) {
-  if (region === "All Regions") return "flags-world";
-  return `flags-${region.toLowerCase().replace(/\s+/g, "-")}`;
+export function regionToModeCode(mode, region) {
+  const regionSlug = region === "All Regions" ? "world" : region.toLowerCase().replace(/\s+/g, "-");
+  return `${mode}-${regionSlug}`;
 }
 
 export const TIER_COLORS = {

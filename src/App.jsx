@@ -23,12 +23,7 @@ import { AdminLoginHistoryPage } from "./pages/AdminLoginHistoryPage";
 import { MapPage } from "./pages/MapPage";
 import { GeoGamePage } from "./pages/GeoGamePage";
 import { GeoLeaderboardPage } from "./pages/GeoLeaderboardPage";
-
-
-
-
-
-
+import { AdvancedFeaturesPage } from "./pages/AdvancedFeaturesPage";
 
 
 function Placeholder({ title }) {
@@ -59,7 +54,7 @@ function App() {
             <Route path="/leaderboard" element={<GeoLeaderboardPage />} />;
             <Route
               path="/advanced-features"
-              element={<Placeholder title="Advanced Features" />}
+              element={<AdvancedFeaturesPage />}
             />
             <Route
               path="/profile"

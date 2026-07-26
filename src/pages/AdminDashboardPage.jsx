@@ -3,11 +3,28 @@ import { Card } from "../components/ui/Card";
 import { Link } from "react-router-dom";
 import { adminApi } from "../api/adminApi";
 import { formatNumber } from "../utils/format";
+import { Button } from "../components/ui/Button";
+
 
 export function AdminDashboardPage() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [buildingPool, setBuildingPool] = useState(false);
+  const [poolResult, setPoolResult] = useState(null);
+
+  async function handleBuildPool() {
+    setBuildingPool(true);
+    setPoolResult(null);
+    try {
+      const result = await adminApi.buildLandmarkPool();
+      setPoolResult(`Imported ${result.landmarksImported} landmarks.`);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setBuildingPool(false);
+    }
+  }
 
   useEffect(() => {
     adminApi
@@ -80,6 +97,38 @@ export function AdminDashboardPage() {
               Login History →
             </Link>
           </div>
+        </div>
+        <div className="mt-4 flex items-center gap-4">
+          <Button
+            variant="outline"
+            onClick={handleBuildPool}
+            disabled={buildingPool}
+          >
+            {buildingPool
+              ? "Building (this takes a while)..."
+              : "Build Landmark Game Pool"}
+          </Button>
+          {poolResult && (
+            <span className="text-sm text-green-400">{poolResult}</span>
+          )}
+
+          <Button
+            variant="outline"
+            onClick={async () => {
+              setBuildingPool(true);
+              try {
+                const r = await adminApi.fillLandmarkGaps();
+                setPoolResult(`Added ${r.landmarksImported} landmarks.`);
+              } catch (e) {
+                alert(e.message);
+              } finally {
+                setBuildingPool(false);
+              }
+            }}
+            disabled={buildingPool}
+          >
+            {buildingPool ? "Filling gaps..." : "Fill Landmark Gaps"}
+          </Button>
         </div>
       </div>
     </main>

@@ -1,6 +1,10 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Globe, Brain, PlaneTakeoff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { countries } from "../data/countries";
+import { geoGameApi } from "../api/geoGameApi";
+import { HeroSlideshow } from "../components/home/HeroSlideshow";
 
 const featuredBlurbs = {
   1: "A fascinating blend of ancient tradition and modern innovation.",
@@ -11,25 +15,35 @@ const featuredCountries = countries.filter(
   (c) => c.countryId in featuredBlurbs,
 );
 
+function sampleArray(array, count) {
+  const shuffled = [...array].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
 export function HomePage() {
   const { isAuthenticated, user } = useAuth();
+  const [heroImages, setHeroImages] = useState([]);
+
+  useEffect(() => {
+    geoGameApi
+      .getLandmarkPool()
+      .then((data) => setHeroImages(sampleArray(data, 6)))
+      .catch(() => {}); // decorative only — hero still works fine without it
+  }, []);
 
   return (
     <main className="bg-navy-950 text-amber-50">
-      {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-navy-900 via-navy-950 to-navy-950" />
+        <HeroSlideshow images={heroImages} />
 
         <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-32">
           <div className="max-w-3xl">
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-amber-400">
               Explore the world
             </p>
-
             <h1 className="font-heading text-5xl leading-tight text-amber-50 md:text-6xl lg:text-7xl">
               Every country has a story.
             </h1>
-
             <p className="mt-6 max-w-2xl text-lg leading-8 text-amber-50/70">
               Discover countries, learn about cultures, track the places you've
               visited, plan your next adventure, and test your geography
@@ -43,7 +57,6 @@ export function HomePage() {
               >
                 Explore Countries
               </Link>
-
               <Link
                 to="/quizzes"
                 className="rounded-md border border-navy-600 px-6 py-3 font-semibold text-amber-50 transition hover:border-amber-400 hover:text-amber-400"
@@ -61,14 +74,13 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Quick Actions */}
       <section className="border-y border-navy-800 bg-navy-900/50">
         <div className="mx-auto grid max-w-7xl gap-px md:grid-cols-3">
           <Link
             to="/countries"
             className="group p-8 transition hover:bg-navy-800/60"
           >
-            <span className="text-3xl">🌍</span>
+            <Globe className="h-8 w-8 text-amber-400" strokeWidth={1.5} />
             <h2 className="mt-4 text-xl font-semibold text-amber-50">
               Discover Countries
             </h2>
@@ -84,7 +96,7 @@ export function HomePage() {
             to="/quizzes"
             className="group p-8 transition hover:bg-navy-800/60"
           >
-            <span className="text-3xl">🧠</span>
+            <Brain className="h-8 w-8 text-amber-400" strokeWidth={1.5} />
             <h2 className="mt-4 text-xl font-semibold text-amber-50">
               Challenge Yourself
             </h2>
@@ -101,7 +113,10 @@ export function HomePage() {
             to={isAuthenticated ? "/my-lists" : "/login"}
             className="group p-8 transition hover:bg-navy-800/60"
           >
-            <span className="text-3xl">✈️</span>
+            <PlaneTakeoff
+              className="h-8 w-8 text-amber-400"
+              strokeWidth={1.5}
+            />
             <h2 className="mt-4 text-xl font-semibold text-amber-50">
               Plan Your Journey
             </h2>
@@ -116,7 +131,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Featured Countries */}
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
@@ -170,18 +184,15 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Bottom CTA */}
       <section className="border-t border-navy-800 bg-navy-900">
         <div className="mx-auto max-w-4xl px-6 py-20 text-center">
           <h2 className="font-heading text-4xl text-amber-50">
             The world is waiting to be explored.
           </h2>
-
           <p className="mx-auto mt-4 max-w-2xl text-amber-50/60">
             Whether you're planning your next trip, learning about different
             cultures, or simply curious about the world, start exploring today.
           </p>
-
           <Link
             to="/countries"
             className="mt-8 inline-block rounded-md bg-amber-500 px-6 py-3 font-semibold text-navy-950 transition hover:bg-amber-400"

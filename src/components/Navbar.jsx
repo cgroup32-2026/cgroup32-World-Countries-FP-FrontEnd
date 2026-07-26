@@ -28,6 +28,12 @@ export function Navbar() {
         <Link to="/game" className="hover:text-amber-400 transition">
           GeoGame
         </Link>
+        <Link
+          to="/advanced-features"
+          className="hover:text-amber-400 transition"
+        >
+          Advanced Features
+        </Link>
 
         {isAuthenticated && (
           <>

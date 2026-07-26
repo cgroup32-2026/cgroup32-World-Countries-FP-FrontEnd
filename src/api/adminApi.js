@@ -6,4 +6,6 @@ export const adminApi = {
   setCanShare: (userId, canShare) => apiClient.put(`/Admin/users/${userId}/sharing`, { canShare }),
   getStats: () => apiClient.get("/Admin/stats"),
   getLoginHistory: (fromIso, toIso) => apiClient.get(`/Admin/login-history?from=${encodeURIComponent(fromIso)}&to=${encodeURIComponent(toIso)}`),
+  buildLandmarkPool: () => apiClient.post("/Admin/geo-landmarks/build-pool"),
+  fillLandmarkGaps: () => apiClient.post("/Admin/geo-landmarks/fill-gaps")
 };
