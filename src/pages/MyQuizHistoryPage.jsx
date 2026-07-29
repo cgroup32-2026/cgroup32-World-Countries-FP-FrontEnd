@@ -1,9 +1,21 @@
+import { useEffect, useState } from "react";
+import { quizzesApi } from "../api/quizzesApi";
 import { QuizAttemptCard } from "../components/quizzes/QuizAttemptCard";
 import { Card } from "../components/ui/Card";
-import { myQuizAttempts } from "../data/quizHistory";
 
 export function MyQuizHistoryPage() {
-  const attempts = myQuizAttempts;
+  const [attempts, setAttempts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    quizzesApi
+      .getMyAttempts()
+      .then(setAttempts)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
   const totalAttempts = attempts.length;
   const averageScore =
     totalAttempts > 0
@@ -13,6 +25,19 @@ export function MyQuizHistoryPage() {
       : 0;
   const bestScore =
     totalAttempts > 0 ? Math.max(...attempts.map((a) => a.score)) : 0;
+
+  if (loading)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-amber-50">
+        Loading...
+      </main>
+    );
+  if (error)
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center bg-navy-950 text-red-300">
+        {error}
+      </main>
+    );
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-navy-950 px-6 py-10 text-amber-50">
@@ -55,7 +80,6 @@ function HistoryStat({ label, value }) {
   return (
     <Card className="text-center">
       <p className="text-3xl font-bold text-amber-400">{value}</p>
-
       <p className="mt-2 text-sm text-amber-50/60">{label}</p>
     </Card>
   );

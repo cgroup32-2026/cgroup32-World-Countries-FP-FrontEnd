@@ -2,18 +2,15 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Globe, Brain, PlaneTakeoff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { countries } from "../data/countries";
+import { countriesApi } from "../api/countriesApi";
 import { geoGameApi } from "../api/geoGameApi";
 import { HeroSlideshow } from "../components/home/HeroSlideshow";
 
 const featuredBlurbs = {
-  1: "A fascinating blend of ancient tradition and modern innovation.",
-  2: "Explore centuries of history, culture, art, and unforgettable cuisine.",
-  3: "Discover breathtaking landscapes and unforgettable adventures.",
+  JPN: "A fascinating blend of ancient tradition and modern innovation.",
+  ITA: "Explore centuries of history, culture, art, and unforgettable cuisine.",
+  NZL: "Discover breathtaking landscapes and unforgettable adventures.",
 };
-const featuredCountries = countries.filter(
-  (c) => c.countryId in featuredBlurbs,
-);
 
 function sampleArray(array, count) {
   const shuffled = [...array].sort(() => Math.random() - 0.5);
@@ -23,12 +20,20 @@ function sampleArray(array, count) {
 export function HomePage() {
   const { isAuthenticated, user } = useAuth();
   const [heroImages, setHeroImages] = useState([]);
+  const [featuredCountries, setFeaturedCountries] = useState([]);
 
   useEffect(() => {
     geoGameApi
       .getLandmarkPool()
       .then((data) => setHeroImages(sampleArray(data, 6)))
       .catch(() => {}); // decorative only — hero still works fine without it
+
+    countriesApi
+      .getAll()
+      .then((data) =>
+        setFeaturedCountries(data.filter((c) => c.ccaCode3 in featuredBlurbs)),
+      )
+      .catch(() => {}); // featured section just stays empty if this fails, nothing else breaks
   }, []);
 
   return (
@@ -131,58 +136,60 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-amber-400">
-              Start exploring
-            </p>
-            <h2 className="mt-2 font-heading text-4xl text-amber-50">
-              Featured destinations
-            </h2>
-          </div>
-          <Link
-            to="/countries"
-            className="text-sm font-semibold text-amber-400 hover:text-amber-300"
-          >
-            View all countries →
-          </Link>
-        </div>
-
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {featuredCountries.map((country) => (
+      {featuredCountries.length > 0 && (
+        <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-widest text-amber-400">
+                Start exploring
+              </p>
+              <h2 className="mt-2 font-heading text-4xl text-amber-50">
+                Featured destinations
+              </h2>
+            </div>
             <Link
-              key={country.countryId}
-              to={`/countries/${country.countryId}`}
-              className="group overflow-hidden rounded-lg border border-navy-700 bg-navy-900 transition hover:-translate-y-1 hover:border-amber-500"
+              to="/countries"
+              className="text-sm font-semibold text-amber-400 hover:text-amber-300"
             >
-              <div className="flex h-48 items-center justify-center bg-navy-800">
-                <img
-                  src={country.flagUrl}
-                  alt={`${country.nameCommon} flag`}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-2xl font-semibold text-amber-50">
-                    {country.nameCommon}
-                  </h3>
-                  <span className="text-sm text-amber-400">
-                    {country.region}
+              View all countries →
+            </Link>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {featuredCountries.map((country) => (
+              <Link
+                key={country.countryId}
+                to={`/countries/${country.countryId}`}
+                className="group overflow-hidden rounded-lg border border-navy-700 bg-navy-900 transition hover:-translate-y-1 hover:border-amber-500"
+              >
+                <div className="flex h-48 items-center justify-center bg-navy-800">
+                  <img
+                    src={country.flagUrl}
+                    alt={`${country.nameCommon} flag`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-2xl font-semibold text-amber-50">
+                      {country.nameCommon}
+                    </h3>
+                    <span className="text-sm text-amber-400">
+                      {country.region}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-amber-50/60">
+                    {featuredBlurbs[country.ccaCode3]}
+                  </p>
+                  <span className="mt-5 inline-block text-sm font-semibold text-amber-400 transition group-hover:translate-x-1">
+                    Explore country →
                   </span>
                 </div>
-                <p className="mt-3 text-sm leading-6 text-amber-50/60">
-                  {featuredBlurbs[country.countryId]}
-                </p>
-                <span className="mt-5 inline-block text-sm font-semibold text-amber-400 transition group-hover:translate-x-1">
-                  Explore country →
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="border-t border-navy-800 bg-navy-900">
         <div className="mx-auto max-w-4xl px-6 py-20 text-center">
