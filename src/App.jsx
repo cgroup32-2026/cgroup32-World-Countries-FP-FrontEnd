@@ -25,7 +25,6 @@ import { GeoGamePage } from "./pages/GeoGamePage";
 import { GeoLeaderboardPage } from "./pages/GeoLeaderboardPage";
 import { AdvancedFeaturesPage } from "./pages/AdvancedFeaturesPage";
 
-
 function Placeholder({ title }) {
   return (
     <div className="min-h-[70vh] flex items-center justify-center text-amber-50">
@@ -37,7 +36,7 @@ function Placeholder({ title }) {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/cgroup32/test2/tar2">
         <div className="min-h-screen bg-navy-950">
           <Navbar />
           <Routes>
@@ -120,6 +119,8 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route path="/index.html" element={<HomePage />} />
+            <Route path="*" element={<HomePage />} />
           </Routes>
         </div>
       </BrowserRouter>

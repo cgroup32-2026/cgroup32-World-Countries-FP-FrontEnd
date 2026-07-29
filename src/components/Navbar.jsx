@@ -35,6 +35,10 @@ export function Navbar() {
           Advanced Features
         </Link>
 
+        <Link to="/leaderboard" className="hover:text-amber-400 transition">
+          Leaderboard
+        </Link>
+
         {isAuthenticated && (
           <>
             <Link to="/my-lists" className="hover:text-amber-400 transition">
